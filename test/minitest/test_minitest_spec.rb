@@ -182,7 +182,21 @@ describe Minitest::Spec do
   end
 
   it "needs to verify equality" do
+    @assertion_count += 6 # extra test
+
     (6 * 7).must_equal(42).must_equal true
+
+    [1,2,3].must_equal([1,2,3]).must_equal true
+
+    [1,2,3].must_equal([3,2,1]).must_equal true
+
+    assert_triggered "Expected both arrays to be of equal size." do
+      [1,2,3].must_equal [1,2]
+    end
+
+    assert_triggered "Expected both arrays to contain the same members." do
+      [1,2].must_equal [2,3]
+    end
 
     assert_triggered "Expected: 42\n  Actual: 54" do
       (6 * 9).must_equal 42
@@ -282,7 +296,17 @@ describe Minitest::Spec do
   end
 
   it "needs to verify inequality" do
+    @assertion_count += 2
+
     42.wont_equal(6 * 9).must_equal false
+
+    assert_triggered "Expected [1, 2, 3] to not be equal to [1, 2, 3]." do
+      [1,2,3].wont_equal [1,2,3]
+    end
+
+    assert_triggered "Expected [1, 2, 3] to not be equal to [3, 2, 1]." do
+      [1,2,3].wont_equal [3,2,1]
+    end
 
     assert_triggered "Expected 1 to not be equal to 1." do
       1.wont_equal 1

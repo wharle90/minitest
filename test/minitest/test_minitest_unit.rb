@@ -754,11 +754,17 @@ class TestMinitestUnitTestCase < Minitest::Test
   def test_assert_equal_different_collection_array_hex_invisible
     object1 = Object.new
     object2 = Object.new
-    msg = "No visible difference in the Array#inspect output.
-           You should look at the implementation of #== on Array or its members.
-           [#<Object:0xXXXXXX>]".gsub(/^ +/, "")
+    msg = "Expected both arrays to contain the same members."
     util_assert_triggered msg do
       @tc.assert_equal [object1], [object2]
+    end
+  end
+
+  def test_assert_equal_different_collection_array_sizes_hex_invisible
+    object1 = Object.new
+    msg = "Expected both arrays to be of equal size."
+    util_assert_triggered msg do
+      @tc.assert_equal [object1], [object1,object1]
     end
   end
 

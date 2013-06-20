@@ -153,8 +153,27 @@ module Minitest
     # See also: Minitest::Assertions.diff
 
     def assert_equal exp, act, msg = nil
-      msg = message(msg, "") { diff exp, act }
-      assert exp == act, msg
+      equal = true
+      if exp.kind_of?(Array) && act.kind_of?(Array)
+        default = ''
+        success = true
+        if exp.size != act.size
+          success = false
+          default = "Expected both arrays to be of equal size"
+        end
+        if success
+          exp.each do |element|
+            if success && !act.include?(element)
+              success = false
+              default = "Expected both arrays to contain the same members"
+            end
+          end
+        end
+        assert success, message(msg) { default }
+      else
+        msg = message(msg, "") { diff exp, act }
+        assert exp == act, msg
+      end
     end
 
     ##
@@ -511,7 +530,23 @@ module Minitest
       msg = message(msg) {
         "Expected #{mu_pp(act)} to not be equal to #{mu_pp(exp)}"
       }
-      refute exp == act, msg
+      if exp.kind_of?(Array) && act.kind_of?(Array)
+        default = ''
+        success = true
+        if exp.size != act.size
+          success = false
+        end
+        if success
+          exp.each do |element|
+            if success && !act.include?(element)
+              success = false
+            end
+          end
+        end
+        refute success, msg
+      else
+        refute exp == act, msg
+      end
     end
 
     ##
